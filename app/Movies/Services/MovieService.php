@@ -62,20 +62,18 @@ class MovieService
      * @return mixed
      * @throws ServiceUnavailableException
      */
-    protected function retry($callback, $times)
+    protected function retry(callable $callback, int $attempts)
     {
-        $attempts = 0;
+        $lastException = null;
 
-        while ($attempts < $times) {
+        for ($i = 0; $i < $attempts; $i++) {
             try {
                 return $callback();
-            } catch (\Throwable $e) {
-                $attempts++;
-            }
-
-            if ($attempts >= $times) {
-                throw new ServiceUnavailableException("Service Unavailable after $times retries.");
+            } catch (ServiceUnavailableException $e) {
+                $lastException = $e;
             }
         }
+
+        throw $lastException;
     }
 }

@@ -15,7 +15,7 @@ class DriverFactory
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \InvalidArgumentException
      */
-    public static function create(string $login): AuthenticatorDriverInterface
+    public function create(string $login): AuthenticatorDriverInterface
     {
         if (str_starts_with($login, 'FOO_')) {
             return app()->make(FooDriver::class);

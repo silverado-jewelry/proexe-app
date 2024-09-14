@@ -12,6 +12,15 @@ class ExternalGuard implements Guard
     protected $user;
 
     /**
+     * ExternalGuard constructor.
+     *
+     * @param DriverFactory $driverFactory
+     */
+    public function __construct(
+        protected DriverFactory $driverFactory
+    ) {}
+
+    /**
      * @inheritDoc
      */
     public function check()
@@ -57,7 +66,7 @@ class ExternalGuard implements Guard
 
         try {
             $authenticator = new Authenticator(
-                DriverFactory::create($login)
+                $this->driverFactory->create($login)
             );
         } catch (\Throwable $e) {
             return false;
