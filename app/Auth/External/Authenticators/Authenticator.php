@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Auth\External\Decorators;
+namespace App\Auth\External\Authenticators;
 
-use App\Auth\External\Authenticators\AuthenticatorInterface;
+use App\Auth\External\Drivers\AuthenticatorDriverInterface;
 use Firebase\JWT\JWT;
 
-class AuthenticatorDecorator
+class Authenticator
 {
     /** @var string|null */
     protected $token;
 
     /**
-     * @param AuthenticatorInterface $authenticator
+     * @param AuthenticatorDriverInterface $driver
      */
     public function __construct(
-        protected AuthenticatorInterface $authenticator
+        protected AuthenticatorDriverInterface $driver
     ) {}
 
     /**
@@ -24,7 +24,7 @@ class AuthenticatorDecorator
      */
     public function authenticate(string $login, string $password): bool
     {
-        if ($this->authenticator->authenticate($login, $password)) {
+        if ($this->driver->authenticate($login, $password)) {
             $this->createToken($login);
             return true;
         }
@@ -39,7 +39,7 @@ class AuthenticatorDecorator
     {
         $payload = [
             'login' => $login,
-            'provider' => $this->authenticator->getProvider(),
+            'provider' => $this->driver->getProvider(),
         ];
 
         $this->token = JWT::encode($payload, env('JWT_SECRET'), 'HS256');

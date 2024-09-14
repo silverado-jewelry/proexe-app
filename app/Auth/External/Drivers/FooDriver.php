@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Auth\External\Authenticators;
+namespace App\Auth\External\Drivers;
 
-use External\Foo\Auth\AuthWS;
+use External\Foo\Auth\AuthWS as ExternalAuthenticator;
 
-class FooAuthenticator implements AuthenticatorInterface
+class FooDriver implements AuthenticatorDriverInterface
 {
     use GetProvider;
 
@@ -12,10 +12,10 @@ class FooAuthenticator implements AuthenticatorInterface
     protected string $provider = 'foo';
 
     /**
-     * @param AuthWS $authService
+     * @param ExternalAuthenticator $authService
      */
     public function __construct(
-        protected AuthWS $authService,
+        protected ExternalAuthenticator $authService,
     ) {}
 
     /**

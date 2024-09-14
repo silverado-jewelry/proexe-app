@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Auth\External\Authenticators;
+namespace App\Auth\External\Drivers;
 
-interface AuthenticatorInterface
+interface AuthenticatorDriverInterface
 {
     /**
      * @param string $login

@@ -2,8 +2,8 @@
 
 namespace App\Auth\External\Guards;
 
-use App\Auth\External\Decorators\AuthenticatorDecorator;
-use App\Auth\External\Factories\AuthenticatorFactory;
+use App\Auth\External\Authenticators\Authenticator;
+use App\Auth\External\Factories\DriverFactory;
 use Illuminate\Contracts\Auth\Guard;
 
 class ExternalGuard implements Guard
@@ -56,8 +56,8 @@ class ExternalGuard implements Guard
         }
 
         try {
-            $authenticator = new AuthenticatorDecorator(
-                AuthenticatorFactory::create($login)
+            $authenticator = new Authenticator(
+                DriverFactory::create($login)
             );
         } catch (\Throwable $e) {
             return false;

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Auth\External\Authenticators;
+namespace App\Auth\External\Drivers;
 
-use External\Baz\Auth\Authenticator;
+use External\Baz\Auth\Authenticator as ExternalAuthenticator;
 use External\Baz\Auth\Responses\Success;
 
-class BazAuthenticator implements AuthenticatorInterface
+class BazDriver implements AuthenticatorDriverInterface
 {
     use GetProvider;
 
@@ -13,10 +13,10 @@ class BazAuthenticator implements AuthenticatorInterface
     protected string $provider = 'baz';
 
     /**
-     * @param Authenticator $authService
+     * @param ExternalAuthenticator $authService
      */
     public function __construct(
-        protected Authenticator $authService,
+        protected ExternalAuthenticator $authService,
     ) {}
 
     /**

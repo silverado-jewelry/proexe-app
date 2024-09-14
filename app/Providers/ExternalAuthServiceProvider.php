@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Auth\External\Authenticators\BarAuthenticator;
-use App\Auth\External\Authenticators\BazAuthenticator;
-use App\Auth\External\Authenticators\FooAuthenticator;
+use App\Auth\External\Drivers\BarDriver;
+use App\Auth\External\Drivers\BazDriver;
+use App\Auth\External\Drivers\FooDriver;
 use App\Auth\External\Guards\ExternalGuard;
 use External\Bar\Auth\LoginService as ExternalBarAuthenticator;
 use External\Baz\Auth\Authenticator as ExternalBazAuthenticator;
@@ -21,9 +21,9 @@ class ExternalAuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(FooAuthenticator::class, fn() => new FooAuthenticator(new ExternalFooAuthenticator()));
-        $this->app->bind(BarAuthenticator::class, fn() => new BarAuthenticator(new ExternalBarAuthenticator()));
-        $this->app->bind(BazAuthenticator::class, fn() => new BazAuthenticator(new ExternalBazAuthenticator()));
+        $this->app->bind(FooDriver::class, fn() => new FooDriver(new ExternalFooAuthenticator()));
+        $this->app->bind(BarDriver::class, fn() => new BarDriver(new ExternalBarAuthenticator()));
+        $this->app->bind(BazDriver::class, fn() => new BazDriver(new ExternalBazAuthenticator()));
     }
 
     /**

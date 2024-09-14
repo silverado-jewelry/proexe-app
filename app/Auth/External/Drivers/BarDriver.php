@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Auth\External\Authenticators;
+namespace App\Auth\External\Drivers;
 
-use External\Bar\Auth\LoginService;
+use External\Bar\Auth\LoginService as ExternalAuthenticator;
 
-class BarAuthenticator implements AuthenticatorInterface
+class BarDriver implements AuthenticatorDriverInterface
 {
     use GetProvider;
 
@@ -12,10 +12,10 @@ class BarAuthenticator implements AuthenticatorInterface
     protected string $provider = 'bar';
 
     /**
-     * @param LoginService $authService
+     * @param ExternalAuthenticator $authService
      */
     public function __construct(
-        protected LoginService $authService,
+        protected ExternalAuthenticator $authService,
     ) {}
 
     /**
