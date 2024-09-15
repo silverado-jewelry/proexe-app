@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Cache;
 
 class MovieService
 {
-    /** @var string */
-    protected $cacheKey = 'movies.titles';
-
     /** @var int */
     protected $retryAttempts = 3;
 
@@ -35,11 +32,9 @@ class MovieService
      */
     public function getTitles(): iterable
     {
-        return Cache::remember($this->cacheKey, 300, function () {
-            yield from $this->getTitlesWithRetry($this->fooService);
-            yield from $this->getTitlesWithRetry($this->barService);
-            yield from $this->getTitlesWithRetry($this->bazService);
-        });
+        yield from $this->getTitlesWithRetry($this->fooService);
+        yield from $this->getTitlesWithRetry($this->barService);
+        yield from $this->getTitlesWithRetry($this->bazService);
     }
 
     /**

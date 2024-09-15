@@ -4,6 +4,7 @@ namespace App\Movies\Adapters;
 
 use App\Movies\Exceptions\ServiceUnavailableException;
 use External\Foo\Movies\MovieService as ExternalMovieService;
+use Illuminate\Support\Facades\Cache;
 
 class FooMovieServiceAdapter implements MovieServiceAdapterInterface
 {
@@ -22,7 +23,9 @@ class FooMovieServiceAdapter implements MovieServiceAdapterInterface
     public function getTitles(): iterable
     {
         try {
-            $titles = $this->movieService->getTitles();
+            $titles = Cache::remember('movies.foo.titles', 60, function () {
+                return $this->movieService->getTitles();
+            });
         } catch (\Throwable $e) {
             throw new ServiceUnavailableException($e->getMessage());
         }

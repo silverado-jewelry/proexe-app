@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Movies\Services\MovieService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\StreamedJsonResponse;
 
 class MovieController extends Controller
