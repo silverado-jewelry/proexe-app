@@ -2,28 +2,23 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MovieServiceFeatureTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_movies_not_empty()
     {
         $response = $this->get('/api/titles');
 
-        // Decode the JSON response
-        $data = $response->json();
-
-        // Assert that the data is not empty
-        $this->assertNotEmpty($data, "The response is empty");
-
-        // Assert that the response status is OK (200)
         $response->assertStatus(200);
+
+        $content = $response->streamedContent();
+
+        $data = json_decode($content, true);
+
+        $this->assertNotEmpty($data, "The streamed response is empty");
+
+        $this->assertIsArray($data, "The streamed response is not an array");
+        $this->assertNotEmpty($data[0], "The first movie title is empty");
     }
 }

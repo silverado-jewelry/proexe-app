@@ -39,10 +39,18 @@ class Authenticator
     {
         $payload = [
             'login' => $login,
-            'provider' => $this->driver->getProvider(),
+            'provider' => $this->getProvider(),
         ];
 
         $this->token = JWT::encode($payload, env('JWT_SECRET'), 'HS256');
+    }
+
+    /**
+     * @return string
+     */
+    public function getProvider(): string
+    {
+        return $this->driver->getProvider();
     }
 
     /**

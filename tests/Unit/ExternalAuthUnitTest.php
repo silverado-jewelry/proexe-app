@@ -6,6 +6,7 @@ use App\Auth\External\Authenticators\Authenticator;
 use App\Auth\External\Drivers\AuthenticatorDriverInterface;
 use App\Auth\External\Factories\DriverFactory;
 use App\Auth\External\Guards\ExternalGuard;
+use Illuminate\Http\Request;
 use Tests\TestCase;
 use Mockery;
 
@@ -13,6 +14,7 @@ class ExternalAuthUnitTest extends TestCase
 {
     protected $guard;
     protected $driverFactoryMock;
+    protected $requestMock;
     protected $driverMock;
     protected $authenticator;
 
@@ -22,11 +24,13 @@ class ExternalAuthUnitTest extends TestCase
 
         $this->driverFactoryMock = $this->createMock(DriverFactory::class);
 
+        $this->requestMock = $this->createMock(Request::class);
+
         $this->driverMock = $this->createMock(AuthenticatorDriverInterface::class);
 
         $this->authenticator = $this->createMock(Authenticator::class);
 
-        $this->guard = new ExternalGuard($this->driverFactoryMock);
+        $this->guard = new ExternalGuard($this->driverFactoryMock, $this->requestMock);
     }
 
     public function test_validate_with_valid_credentials()
@@ -44,7 +48,7 @@ class ExternalAuthUnitTest extends TestCase
             ->with($login, $password)
             ->willReturn(true);
 
-        $this->driverMock->expects($this->once())
+        $this->driverMock->expects($this->exactly(2))
             ->method('getProvider')
             ->willReturn('bar');
 

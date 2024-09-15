@@ -5,8 +5,8 @@ namespace App\Movies\Adapters;
 interface MovieServiceAdapterInterface
 {
     /**
-     * @return array
+     * @return iterable
      * @throws \Throwable
      */
-    public function getTitles(): array;
+    public function getTitles(): iterable;
 }

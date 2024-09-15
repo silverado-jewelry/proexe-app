@@ -9,6 +9,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AuthController extends Controller
 {
     /**
+     * AuthController constructor.
+     */
+    public function __construct()
+    {
+//        $this->middleware('guest.external', ['only' => ['login']]);
+    }
+
+    /**
      * @param Request $request
      * @return JsonResponse
      */

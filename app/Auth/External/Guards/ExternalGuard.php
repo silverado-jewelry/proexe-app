@@ -4,7 +4,9 @@ namespace App\Auth\External\Guards;
 
 use App\Auth\External\Authenticators\Authenticator;
 use App\Auth\External\Factories\DriverFactory;
+use App\Auth\External\Providers\UserProvider;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
 
 class ExternalGuard implements Guard
 {
@@ -17,7 +19,8 @@ class ExternalGuard implements Guard
      * @param DriverFactory $driverFactory
      */
     public function __construct(
-        protected DriverFactory $driverFactory
+        protected DriverFactory $driverFactory,
+        protected Request $request
     ) {}
 
     /**
@@ -25,7 +28,7 @@ class ExternalGuard implements Guard
      */
     public function check()
     {
-        return !is_null($this->user);
+        return !is_null($this->user) || $this->attempt();
     }
 
     /**
@@ -78,10 +81,30 @@ class ExternalGuard implements Guard
             $this->setUser((object) [
                 'id' => $login,
                 'token' => $authenticator->getToken(),
+                'provider' => $authenticator->getProvider(),
             ]);
         }
 
         return $authenticated;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function attempt()
+    {
+        $authorizationHeader = $this->request->header('Authorization');
+
+        if ($authorizationHeader && preg_match('/Bearer\s(\S+)/', $authorizationHeader, $matches)) {
+            $userProvider = new UserProvider();
+
+            if (($user = $userProvider->authorize($matches[1] ?? '')) !== null) {
+                $this->setUser((object) $user);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

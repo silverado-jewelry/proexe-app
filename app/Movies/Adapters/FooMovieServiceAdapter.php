@@ -19,7 +19,7 @@ class FooMovieServiceAdapter implements MovieServiceAdapterInterface
     /**
      * @inheritDoc
      */
-    public function getTitles(): array
+    public function getTitles(): iterable
     {
         try {
             $titles = $this->movieService->getTitles();
@@ -27,6 +27,8 @@ class FooMovieServiceAdapter implements MovieServiceAdapterInterface
             throw new ServiceUnavailableException($e->getMessage());
         }
 
-        return array_map(fn($title) => $title, $titles);
+        foreach ($titles as $title) {
+            yield $title;
+        }
     }
 }

@@ -3,30 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Movies\Services\MovieService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedJsonResponse;
 
 class MovieController extends Controller
 {
     /**
+     * MovieController constructor.
+     *
      * @param MovieService $movieService
      */
     public function __construct(
         private MovieService $movieService
-    ) {}
+    ) {
+//        $this->middleware('auth.external', ['only' => ['getTitles']]);
+    }
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getTitles(Request $request): JsonResponse
+    public function getTitles(Request $request)
     {
         try {
-            $titles = $this->movieService->getTitles();
+            $response = new StreamedJsonResponse($this->movieService->getTitles());
         } catch (\Throwable $e) {
             return response()->json(['status' => 'failure'], 500);
         }
 
-        return response()->json($titles);
+        return $response;
     }
 }

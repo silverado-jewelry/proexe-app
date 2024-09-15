@@ -28,52 +28,42 @@ class MovieService
     ) {}
 
     /**
-     * Get all movie titles.
+     * Get all movie titles as an iterable.
      *
-     * @return array
+     * @return iterable
      * @throws ServiceUnavailableException
      */
-    public function getTitles(): array
+    public function getTitles(): iterable
     {
         return Cache::remember($this->cacheKey, 300, function () {
-            $titles = [];
-
-            $titles = array_merge($titles, $this->retry(function() {
-                return $this->fooService->getTitles();
-            }, $this->retryAttempts));
-
-            $titles = array_merge($titles, $this->retry(function() {
-                return $this->barService->getTitles();
-            }, $this->retryAttempts));
-
-            $titles = array_merge($titles, $this->retry(function() {
-                return $this->bazService->getTitles();
-            }, $this->retryAttempts));
-
-            return $titles;
+            yield from $this->getTitlesWithRetry($this->fooService);
+            yield from $this->getTitlesWithRetry($this->barService);
+            yield from $this->getTitlesWithRetry($this->bazService);
         });
     }
 
     /**
-     * Retry a callback a given number of times.
+     * Get titles from a service with retry logic.
      *
-     * @param callable $callback
-     * @param int $times
-     * @return mixed
+     * @param MovieServiceAdapterInterface $service
+     * @return iterable
      * @throws ServiceUnavailableException
      */
-    protected function retry(callable $callback, int $attempts)
+    protected function getTitlesWithRetry(MovieServiceAdapterInterface $service): iterable
     {
         $lastException = null;
 
-        for ($i = 0; $i < $attempts; $i++) {
+        for ($i = 0; $i < $this->retryAttempts; $i++) {
             try {
-                return $callback();
+                // Yield titles from the service
+                yield from $service->getTitles();
+                return; // Exit the function once successful
             } catch (ServiceUnavailableException $e) {
                 $lastException = $e;
             }
         }
 
+        // If retry attempts are exhausted, throw the last exception
         throw $lastException;
     }
 }

@@ -25,7 +25,7 @@ class ExternalAuthServiceProvider extends ServiceProvider
         $this->app->bind(FooDriver::class, fn() => new FooDriver(new ExternalFooAuthenticator()));
         $this->app->bind(BarDriver::class, fn() => new BarDriver(new ExternalBarAuthenticator()));
         $this->app->bind(BazDriver::class, fn() => new BazDriver(new ExternalBazAuthenticator()));
-        $this->app->bind(ExternalGuard::class, fn() => new ExternalGuard(new DriverFactory()));
+        $this->app->bind(ExternalGuard::class, fn($app) => new ExternalGuard(new DriverFactory(), $app['request']));
     }
 
     /**

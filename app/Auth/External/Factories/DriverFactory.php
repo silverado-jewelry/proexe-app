@@ -27,4 +27,15 @@ class DriverFactory
 
         throw new \InvalidArgumentException('Invalid login prefix.');
     }
+
+    /**
+     * @param string $login
+     * @return AuthenticatorDriverInterface
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \InvalidArgumentException
+     */
+    public static function createStatic(string $login): AuthenticatorDriverInterface
+    {
+        return (new self())->create($login);
+    }
 }

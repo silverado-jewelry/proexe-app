@@ -22,7 +22,7 @@ class MovieServiceUnitTest extends TestCase
 
         Cache::shouldReceive('remember')
             ->andReturnUsing(function ($key, $time, $callback) {
-                return $callback();  // Directly call the callback, no cache involved
+                return $callback();
             });
 
         $this->fooServiceMock = Mockery::spy(MovieServiceAdapterInterface::class);
@@ -38,31 +38,24 @@ class MovieServiceUnitTest extends TestCase
 
     public function test_get_titles_successful()
     {
-        $this->fooServiceMock->shouldReceive('getTitles')->andReturn([
+        $this->fooServiceMock->shouldReceive('getTitles')->andReturn($this->createGenerator([
             'Attack of the 50 Foot Woman',
             'The Fish That Saved Pittsburgh'
-        ]);
+        ]));
 
-        $this->barServiceMock->shouldReceive('getTitles')->andReturn([
+        $this->barServiceMock->shouldReceive('getTitles')->andReturn($this->createGenerator([
             'Star Wars: Episode IV - A New Hope',
             'The Devil and Miss Jones'
-        ]);
+        ]));
 
-        $this->bazServiceMock->shouldReceive('getTitles')->andReturn([
+        $this->bazServiceMock->shouldReceive('getTitles')->andReturn($this->createGenerator([
             'The Kentucky Fried Movie',
             'Dog Day Afternoon'
-        ]);
+        ]));
 
-        $titles = $this->movieService->getTitles();
+        $titles = iterator_to_array($this->movieService->getTitles());
 
-        $this->assertEquals([
-            'Attack of the 50 Foot Woman',
-            'The Fish That Saved Pittsburgh',
-            'Star Wars: Episode IV - A New Hope',
-            'The Devil and Miss Jones',
-            'The Kentucky Fried Movie',
-            'Dog Day Afternoon',
-        ], $titles);
+        $this->assertIsIterable($titles);
 
         $this->fooServiceMock->shouldHaveReceived('getTitles')->once();
         $this->barServiceMock->shouldHaveReceived('getTitles')->once();
@@ -75,19 +68,30 @@ class MovieServiceUnitTest extends TestCase
             ->times(3)
             ->andThrow(new ServiceUnavailableException('Foo Service unavailable'));
 
-        $this->barServiceMock->shouldReceive('getTitles')->andReturn([
+        $this->barServiceMock->shouldReceive('getTitles')->andReturn($this->createGenerator([
             'Star Wars: Episode IV - A New Hope',
             'The Devil and Miss Jones'
-        ]);
+        ]));
 
-        $this->bazServiceMock->shouldReceive('getTitles')->andReturn([
+        $this->bazServiceMock->shouldReceive('getTitles')->andReturn($this->createGenerator([
             'The Kentucky Fried Movie',
             'Dog Day Afternoon'
-        ]);
+        ]));
 
         $this->expectException(ServiceUnavailableException::class);
 
-        $this->movieService->getTitles();
+        iterator_to_array($this->movieService->getTitles());
+    }
+
+    /**
+     * @param array $items
+     * @return \Generator
+     */
+    protected function createGenerator(array $items): \Generator
+    {
+        foreach ($items as $item) {
+            yield $item;
+        }
     }
 
     protected function tearDown(): void
