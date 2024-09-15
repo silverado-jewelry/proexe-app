@@ -16,6 +16,7 @@ class MovieController extends Controller
     public function __construct(
         private MovieService $movieService
     ) {
+        // Uncomment the following line to restrict access to the getTitles method for non-authenticated users
 //        $this->middleware('auth.external', ['only' => ['getTitles']]);
     }
 

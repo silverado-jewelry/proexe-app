@@ -13,6 +13,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
+        // Uncomment the following line to restrict access to the login method for already authenticated users
 //        $this->middleware('guest.external', ['only' => ['login']]);
     }
 
